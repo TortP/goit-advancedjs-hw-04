@@ -14,25 +14,38 @@ const form = document.querySelector('.form');
 const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
 const loadMoreBtn = document.querySelector('.load-more');
-const loadCompleteText = document.querySelector('.load-complete');
 
 let lightbox = new SimpleLightbox('.gallery li');
 
 let currentPage = 1;
-const perPage = 9;
+const perPage = 15;
 let currentQuery = '';
 let shownImageIds = new Set();
 let totalImages = 0;
+const errorCatch = () =>
+  showToast(
+    'error',
+    'Something went wrong. Please try again later!',
+    '#ff4d4d',
+    'fa fa-times-circle'
+  );
+const loadComplete = () =>
+  showToast(
+    'info',
+    "We're sorry, but you've reached the end of search results.",
+    '#106BDA',
+    'fas fa-info-circle'
+  );
 
-function showToast(type, message) {
+function showToast(type, message, backgroundColor, icon) {
   const options = {
     message,
     position: 'topRight',
-    timeout: 2000,
-    backgroundColor: '#ff4d4d',
+    timeout: 3000,
+    backgroundColor,
     titleColor: '#fff',
     messageColor: '#fff',
-    icon: 'fa fa-times-circle',
+    icon,
     iconColor: '#fff',
     progressBarColor: '#fff',
     close: true,
@@ -45,8 +58,14 @@ form.addEventListener('submit', async e => {
   e.preventDefault();
 
   currentQuery = form.elements.searchQuery.value.trim();
+  form.reset();
   if (!currentQuery) {
-    showToast('warning', 'Enter a keyword to search!');
+    showToast(
+      'warning',
+      'Enter a keyword to search!',
+      '#ffc107',
+      'fa fa-exclamation-circle'
+    );
     return;
   }
 
@@ -54,7 +73,6 @@ form.addEventListener('submit', async e => {
   gallery.innerHTML = '';
   shownImageIds.clear();
   loadMoreBtn.classList.add('is-hidden');
-  loadCompleteText.classList.add('is-hidden');
   loader.classList.add('is-hidden');
 
   loader.classList.remove('is-hidden');
@@ -73,7 +91,9 @@ form.addEventListener('submit', async e => {
     if (newImages.length === 0) {
       showToast(
         'error',
-        'Sorry, there are no images matching your search query. Please, try again!'
+        'Sorry, there are no images matching your search query. Please, try again!',
+        '#ff4d4d',
+        'fa fa-times-circle'
       );
     } else {
       const markup = createGalleryMarkup(newImages);
@@ -83,11 +103,11 @@ form.addEventListener('submit', async e => {
       if (shownImageIds.size < totalImages) {
         loadMoreBtn.classList.remove('is-hidden');
       } else {
-        loadCompleteText.classList.remove('is-hidden');
+        loadComplete();
       }
     }
   } catch (error) {
-    showToast('error', 'Something went wrong. Please try again later!');
+    errorCatch();
   } finally {
     loader.classList.add('is-hidden');
   }
@@ -96,7 +116,6 @@ form.addEventListener('submit', async e => {
 loadMoreBtn.addEventListener('click', async () => {
   loader.classList.remove('is-hidden');
   loadMoreBtn.classList.add('is-hidden');
-  loadCompleteText.classList.add('is-hidden');
 
   let newImages = [];
   let tempPage = currentPage + 1;
@@ -125,19 +144,27 @@ loadMoreBtn.addEventListener('click', async () => {
       const markup = createGalleryMarkup(newImages.slice(0, perPage));
       gallery.insertAdjacentHTML('beforeend', markup);
       lightbox.refresh();
+
+      const card = document.querySelector('.gallery li');
+      if (card) {
+        const cardHeight = card.getBoundingClientRect().height;
+        window.scrollBy({
+          top: cardHeight * 3 + 20,
+          behavior: 'smooth',
+        });
+      }
     }
 
     if (shownImageIds.size >= totalImages || newImages.length < perPage) {
       loadMoreBtn.classList.add('is-hidden');
       loader.classList.add('is-hidden');
-      loadCompleteText.classList.remove('is-hidden');
+      loadComplete();
     } else {
       loadMoreBtn.classList.remove('is-hidden');
       loader.classList.add('is-hidden');
-      loadCompleteText.classList.add('is-hidden');
     }
   } catch (error) {
-    showToast('error', 'Something went wrong. Please try again later!');
+    errorCatch();
   } finally {
     loader.classList.add('is-hidden');
   }

@@ -11,15 +11,14 @@ export function createGalleryMarkup(images) {
         downloads,
       }) => `
         <li class="gallery-item" href="${largeImageURL}">
-  <div class="image-wrapper">
-    <img src="${webformatURL}" alt="${tags}" />
-  </div>
-  <div class="info">
-              <p>Likes<br><strong>${likes}</strong></p>
-              <p>Views<br><strong>${views}</strong></p>
-              <p>Comments<br><strong>${comments}</strong></p>
-              <p>Downloads<br><strong>${downloads}</strong></p>
-            </div>
+          <div class="image-wrapper">
+            <img src="${webformatURL}" alt="${tags}" />
+          </div>
+          <div class="info">
+            <p>Likes<br><strong>${likes}</strong></p>
+            <p>Views<br><strong>${views}</strong></p>
+            <p>Comments<br><strong>${comments}</strong></p>
+            <p>Downloads<br><strong>${downloads}</strong></p>
           </div>
         </li>
       `
