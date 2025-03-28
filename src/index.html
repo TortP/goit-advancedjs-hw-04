@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Search images</title>
+  </head>
+  <body>
+    <form class="form">
+      <input
+        type="text"
+        name="searchQuery"
+        autocomplete="off"
+        placeholder="Search images..."
+      />
+      <button type="submit">Search</button>
+    </form>
+
+    <ul class="gallery"></ul>
+
+    <div class="load-more-wrapper">
+      <button class="load-more is-hidden">Load more</button>
+      <span class="loader is-hidden">Loading images, please wait…</span>
+      <p class="load-complete is-hidden">All images have been loaded.</p>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
